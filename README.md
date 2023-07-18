@@ -15,4 +15,4 @@ use
 2.download and run corse-anywhere
 you can find it here: https://github.com/Rob--W/cors-anywhere
 
-3.input artist then add them to the list, then click to download.
+3.input artist then add them to the list, then click download.

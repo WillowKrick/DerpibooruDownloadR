@@ -1,0 +1,74 @@
+body,
+html {
+    height: 96%;
+}
+
+#getdata {
+    height: 100%;
+    margin: 0 auto;
+    border: 2px dashed darkgoldenrod;
+    border-radius: 10px;
+    min-width: 220px;
+    overflow: hidden;
+    padding-bottom: 20px;
+
+}
+
+.welcome {
+    color: darkgoldenrod;
+    text-align: center;
+}
+
+.srch {
+    margin-left: 40%;
+}
+
+button {
+    border: 1px dashed darkgoldenrod;
+    border-radius: 3px;
+    line-height: 20px;
+    font-size: 16px;
+    color: darkgoldenrod;
+    background-color: #ed9;
+}
+
+button:disabled {
+    background-color: darkslategray;
+    color: #aaa;
+}
+
+button:active {
+    background-color: orangered;
+    color: #fed;
+}
+
+.container {
+    margin-bottom: 20px;
+    margin-top: 10px;
+    box-sizing: border-box;
+    height: calc(100% - 100px);
+    overflow: auto;
+}
+
+.rs {
+
+    color: darkgoldenrod;
+    text-align: center;
+    width: 93%;
+    height: auto;
+    margin-left: 3%;
+    margin-top: 5px;
+    border: 1px solid red;
+    border-radius: 7px;
+    float: left;
+    background-color: bisque;
+}
+
+.rs>p {
+    text-align: center;
+
+}
+
+input {
+    text-align: center;
+}

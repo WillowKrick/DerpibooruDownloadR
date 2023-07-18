@@ -25,6 +25,7 @@
   </div>
   <script>
     let list = [];
+    let failedList = [];
     //get search artist and push to list
     document.querySelector('.addToList').onclick = function () {
       let artist = document.querySelector('.artist').value;
@@ -50,10 +51,10 @@
 
         // default start page is 1, total is 0, finish status:isFinished is false
         //total is the number of images downloaded, allImg is the number of images in the artist's tag
-        let page = 16;
-        let total = 240;
+        let page = 1;
+        let total = 0;
         let isFinished = false;
-        // let failedCount = 0;
+        let failedCount = 0;
         //do loop until all this artist's images are downloaded
         while (await true) {
           //if download is finished, jump out of loop,and start next artist
@@ -80,6 +81,12 @@
             //if this image download failed, retry
             if (!success) {
               success = await downloadImage(images[0]);
+              ++failedCount;
+              if (failedCount >= 600) {
+                failedList.push(images[idx]);
+                idx++;
+                failedCount = 0;
+              }
             }
             await new Promise(resolve => setTimeout(resolve, 100));
             //if download success, downloaded total +1
@@ -91,22 +98,38 @@
               //if current downloading image download failed, retry till success
               if (!success) {
                 idx--;
+                ++failedCount;
+                if (failedCount >= 600) {
+                  failedList.push(images[idx]);
+                  idx++;
+                  failedCount = 0;
+                }
+                await new Promise(resolve => setTimeout(resolve, 100));
               }
-              await new Promise(resolve => setTimeout(resolve, 100));
             }
-          }
-          //if total number of images downloaded
-          //is less than total number of images in this artist's tag,
-          //continue download next page
-          //or if total number of images downloaded 
-          // is equal or more than total number of images in this artist's tag,
-          //download is finished, jump out of loop
-          if (total < allImg) {
-            page += 1;
-            console.log("下载成功,下一页", page)
-          } else {
-            isFinished = true;
-            console.log('下载完成: total >= allImg?', total, allImg, total >= allImg);
+            //if total number of images downloaded
+            //is less than total number of images in this artist's tag,
+            //continue download next page
+            //or if total number of images downloaded 
+            // is equal or more than total number of images in this artist's tag,
+            //download is finished, jump out of loop
+            if (total < allImg) {
+              page += 1;
+              console.log("下载成功,下一页", page)
+            } else {
+              isFinished = true;
+              console.log('下载完成: total >= allImg?', total, allImg, total >= allImg);
+              // if has failed images, then output to a json file.
+              if (index >= list.length - 1 && failedList.length > 0) {
+                console.log("判断成功");
+                let a = document.createElement("a");
+                a.href = URL.createObjectURL(new Blob([JSON.stringify(failedList)], { type: "application/json" }));
+                a.download = "failedList.json";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+              }
+            }
           }
         }
       }
@@ -182,15 +205,13 @@
         timeout: 60000
       }).then(response => {
         // console.log(response);
-        let blob = response.data;
         // console.log('blob', blob.type);
         let a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
+        a.href = URL.createObjectURL(response.data);
         a.download = filename;
         a.target = '_blank';
         document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        // a.click();
         fflag = true;
       }).catch(err => {
         setTimeout(() => {
@@ -215,11 +236,12 @@
       }).catch(msg => {
         console.log(msg);
         setTimeout(() => {
-          rs = [];
+          rs = {};
         }, 6000)
       })
       return rs;
     }
+
   </script>
 </body>
 

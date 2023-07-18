@@ -1,6 +1,6 @@
 # DerpibooruDownloadR
-##intro:
-###v23.07.18.01
+## intro:
+### v23.07.18.01
 
 here is a html file that you can use it download pictures from derpibooru.
 

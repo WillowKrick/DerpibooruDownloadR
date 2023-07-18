@@ -3,9 +3,9 @@
 ### here is a html file that you can use it download pictures from derpibooru.
 ## version of history
 ### v23.07.18.01
-#### you can use list download for artist.
+#### you can use add to list download for artist.
 #### notice that you must input at least one artist;
-#### use tags download only for once you input or every single artist in your download list.
+#### use tags download, once you input and every single artist will including them.
 
 #### the default filter is "Everything".
 

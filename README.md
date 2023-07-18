@@ -9,7 +9,7 @@
 #### the default filter is "Everything".
 
 ### v23.07.18.02
-#### added: record all failed images Object to json file download to loacl disk.
+#### added: record all failed images Object to json file download to local disk.
 
 
 ## use

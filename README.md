@@ -1,6 +1,7 @@
 # DerpibooruDownloadR
-intro:
-v23.07.18.01
+##intro:
+###v23.07.18.01
+
 here is a html file that you can use it download pictures from derpibooru.
 
 you can use list download for artist.
@@ -9,7 +10,6 @@ notice that you must input at least one artist
 use tags download only for once you input or every single artist in your download list.
 
 the default filter is "Everything".
-
 use
 
 1.open it in vs code then open with live serve.

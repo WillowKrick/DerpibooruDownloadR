@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-Cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DB Geter</title>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  <link rel="stylesheet" href="css/get.css">
+</head>
+
+<body>
+  <div id="getdata">
+    <div class="welcome">
+      <input class="artist" type="text" placeholder="键入下载的画师">
+      <input class="tags" type="text" placeholder="键入下载的tags" value="">
+      <div class="choice">
+        <button class="addToList">添加artist</button>
+        <button class="get">获取</button>
+      </div>
+    </div>
+  </div>
+  </div>
+  <script>
+    let list = [];
+    //get search artist and push to list
+    document.querySelector('.addToList').onclick = function () {
+      let artist = document.querySelector('.artist').value;
+
+      //if artist input, push to list
+      artist && list.push(artist);
+      console.log(list);
+    }
+
+    //initialization search +tags+ and +artist+ 
+    let tags = '';
+    let artist = '';
+    //click get button start download images
+    document.querySelector('.get').onclick = async function () {
+      document.querySelector('.tags').value && (tags = document.querySelector('.tags').value);
+      //if button is clicked, disable button. avoid multi click cause multi start
+      document.querySelector('.get').setAttribute("disabled", true);
+      // get length of list then evry time iterate through, download one artist's images
+      for (let index = 0; index < list.length; index++) {
+        //get current artist,store it's as tag
+        artist = list[index] ? 'artist:' + list[index] : ''
+        // console.log(artist);
+
+        // default start page is 1, total is 0, finish status:isFinished is false
+        //total is the number of images downloaded, allImg is the number of images in the artist's tag
+        let page = 16;
+        let total = 240;
+        let isFinished = false;
+        // let failedCount = 0;
+        //do loop until all this artist's images are downloaded
+        while (await true) {
+          //if download is finished, jump out of loop,and start next artist
+          if (isFinished) {
+            break;
+          }
+
+          //get list and total number of images form current page
+          let { images, allImg } = await getImages(artist, page);
+          console.log("已下载:", total + '/' + allImg, '当前页数:', page);
+          // console.log("images.length", images.length);
+          //if no images found or error, jump out of current loop to retry
+
+          if (!images) {
+            console.log('数据走丢哩');
+            continue;
+            //if this page has only one image, download it
+          } else {
+            total += images.length;
+          }
+          if (images.length == 1) {
+            console.log('当前位置:', images.length + '/' + images.length, images[0].id);
+            let success = await downloadImage(images[0]);
+            //if this image download failed, retry
+            if (!success) {
+              success = await downloadImage(images[0]);
+            }
+            await new Promise(resolve => setTimeout(resolve, 100));
+            //if download success, downloaded total +1
+          } else {
+            //if this page has more than one image, download them one by one
+            for (let idx = 0; idx < images.length; idx++) {
+              console.log('当前位置:', idx + '/' + images.length, images[idx].id);
+              let success = await downloadImage(images[idx]);
+              //if current downloading image download failed, retry till success
+              if (!success) {
+                idx--;
+              }
+              await new Promise(resolve => setTimeout(resolve, 100));
+            }
+          }
+          //if total number of images downloaded
+          //is less than total number of images in this artist's tag,
+          //continue download next page
+          //or if total number of images downloaded 
+          // is equal or more than total number of images in this artist's tag,
+          //download is finished, jump out of loop
+          if (total < allImg) {
+            page += 1;
+            console.log("下载成功,下一页", page)
+          } else {
+            isFinished = true;
+            console.log('下载完成: total >= allImg?', total, allImg, total >= allImg);
+          }
+        }
+      }
+    }
+
+    //get and download every image
+    async function downloadImage(item) {
+      //set image name use filtered tags, it has own naming rule
+      //the most important tag is artist. it's the first tag
+
+      //the second important tag is 
+      // safe level, character, gender, sex organ (explicit), species, 
+      // and other tags
+
+      //the third important tag is not important i think, 
+      // or I did not find it's importance
+
+      let primary = [artist];
+      let tmp = item.tags.filter(itm => !primary.includes(itm));
+      let mainTags = [
+        "suggestive", "explicit", "safe", "questionable",
+        "alicorn", "earth pony", "bat pony", "pegasus", "unicorn", "kirin", "hippogriff", "griffon",
+        " deer", "solo",
+        "mare", "female", "stallion", "male", "futa",
+        "bisexual", "intersex", "penis", "vulva", "vagina", "anthro", "human",
+        "lesbian", "gay", "pony", "cum", "anus", "horsecock"
+      ]
+
+      let firstFilted = tmp.filter(itm => {
+        return mainTags.includes(itm)
+      });
+
+      let firstRemain = tmp.filter(itm => {
+        return !mainTags.includes(itm)
+      });
+
+      let secTags = [
+        "chest fluff", "dragon",
+        "twilight sparkle", "applejack", "pinkie pie", "rainbow dash", "fluttershy", "rarity",
+        "spike", "trixie", "starlight glimmer", "sunset shimmer",
+        "princess luna", "princess celestia", "princess cadance", "princess flurry hear", "shining armor",
+        "standing", "lying", "crying", "laughing", "running", "walking", "sleeping", "flying", "shipping", "sitting",
+        "talking", "smiling", "jumping", "dancing", "wacthing", "thinking", "lyra heartstrings", "bon bon", "shaking"
+      ]
+      let oc = firstRemain.filter(itm => itm.startsWith("oc:"));
+      secTags = secTags.concat(oc);
+      let secFilted = firstRemain.filter(itm => {
+        return secTags.includes(itm)
+      });
+      let secRemain = firstRemain.filter(itm => {
+        return !secTags.includes(itm)
+      });
+      primary = primary.concat(firstFilted).concat(secFilted).concat(secRemain);
+      let filename = item.id + "_" + primary.join('_').replace(/\//g, '').replace(/\:/g, '-').replace(/\s/g, '+').replace(/\./g, '&');
+
+      // console.log("tags", item.tags);
+      // console.log("tags", primary);
+      //if filename is too long, cut it,filename length limit is 255
+      //but if more than 250, you can not set Extension.
+      // sample:".webm" has 5 characters
+      //i'd like keep at least 2 space, so i set 248
+      if (filename.length > 250) {
+        filename = filename.slice(0, 248);
+      }
+      //for test code,different image quality.
+      // let url = item.representations.thumb_tiny;
+      let url = item.representations.full;
+
+      // used proxy server to avoid CORS ERROR
+      let fflag = false
+      await axios.get("http://127.0.0.1:8080/" + url, {
+        responseType: 'blob',
+        timeout: 60000
+      }).then(response => {
+        // console.log(response);
+        let blob = response.data;
+        // console.log('blob', blob.type);
+        let a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        a.target = '_blank';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        fflag = true;
+      }).catch(err => {
+        setTimeout(() => {
+          console.log("Failed Error:", err);
+        }, 6000);
+      })
+      // console.log(fflag);
+      return fflag;
+    }
+
+    // 封装获取图片的函数
+    async function getImages(artist, page) {
+
+      let baseUrl = `https://derpibooru.org/api/v1/json/search/images?q=${artist}${((artist && tags) ? ',' + tags : tags)}&filter_id=56027&page=` + page;
+      console.log(baseUrl);
+      let rs = {};
+      await axios.get(baseUrl, {
+        timeout: 20000
+      }).then(rslt => {
+        console.log('即将下载的总数:', rslt.data.total);
+        rs = { images: rslt.data.images, allImg: rslt.data.total };
+      }).catch(msg => {
+        console.log(msg);
+        setTimeout(() => {
+          rs = [];
+        }, 6000)
+      })
+      return rs;
+    }
+  </script>
+</body>
+
+</html>

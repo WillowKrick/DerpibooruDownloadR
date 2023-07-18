@@ -9,11 +9,11 @@
 #### the default filter is "Everything".
 
 ### v23.07.18.02
-#### added: record all failed images Object to json file download to local disk.
+#### added: record all failed Image-Object to json file download to local disk.
 
 
 ## use
-### 1.open it in vs code then open with live serve.
+### 1.open it in vs code then open with live server.
 ### 2.download and run corse-anywhere
 #### you can find it here: https://github.com/Rob--W/cors-anywhere
 ### 3.input artist then add them to the list, then click download.

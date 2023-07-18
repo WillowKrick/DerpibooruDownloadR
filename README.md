@@ -6,8 +6,11 @@
 #### you can use add to list download for artist.
 #### notice that you must input at least one artist;
 #### use tags download, once you input and every single artist will including them.
-
 #### the default filter is "Everything".
+
+### v23.07.18.02
+#### added: record all failed images Object to json file download to loacl disk.
+
 
 ## use
 ### 1.open it in vs code then open with live serve.

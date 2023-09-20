@@ -34,4 +34,4 @@
 
 ### 3. click "start.bat".
 
-### 4. read CMD TIPS to operate
+### 4. read TIPS in CMD window to do next operate

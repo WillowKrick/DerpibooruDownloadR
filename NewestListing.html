@@ -15,7 +15,8 @@
   <div id="getdata">
     <div class="welcome">
       <input class="artist" type="text" placeholder="键入下载的画师">
-      <input class="tags" type="text" placeholder="键入下载的tags" value="">
+      <input class="tags" type="text" placeholder="键入下载的tags" value="pony,explicit">
+      <input class="filter" type="text" placeholder="键入过滤器id，默认everything" value="206450">
       <div class="choice">
         <button class="addToList">添加artist</button>
         <button class="get">获取</button>
@@ -24,11 +25,16 @@
   </div>
   </div>
   <script>
+    const $$ = (selector, mult = false) => {
+      return mult ? document.querySelectorAll(selector) : document.querySelector(selector)
+    }
     let list = [];
+    console.log(list.length);
+    let filter = 56027;
     let failedList = [];
     //get search artist and push to list
-    document.querySelector('.addToList').onclick = function () {
-      let artist = document.querySelector('.artist').value;
+    $$('.addToList').onclick = function () {
+      let artist = $$('.artist').value;
 
       //if artist input, push to list
       artist && list.push(artist);
@@ -38,13 +44,16 @@
     //initialization search +tags+ and +artist+ 
     let tags = '';
     let artist = '';
+
+
     //click get button start download images
-    document.querySelector('.get').onclick = async function () {
-      document.querySelector('.tags').value && (tags = document.querySelector('.tags').value);
+    $$('.get').onclick = async function () {
+      $$('.tags').value && (tags = $$('.tags').value);
+      $$('.filter').value && (filter = $$('.filter').value);
       //if button is clicked, disable button. avoid multi click cause multi start
-      document.querySelector('.get').setAttribute("disabled", true);
+      $$('.get').setAttribute("disabled", true);
       // get length of list then evry time iterate through, download one artist's images
-      for (let index = 0; index < list.length; index++) {
+      for (let index = 0; index < (tags ? 1 : list.length); index++) {
         //get current artist,store it's as tag
         artist = list[index] ? 'artist:' + list[index] : ''
         // console.log(artist);
@@ -78,14 +87,12 @@
           if (images.length == 1) {
             console.log('当前位置:', images.length + '/' + images.length, images[0].id);
             let success = await downloadImage(images[0]);
-            //if this image download failed, retry
+            //if this image download failed, retry 500 times
             if (!success) {
               success = await downloadImage(images[0]);
-              ++failedCount;
-              if (failedCount >= 600) {
-                failedList.push(images[idx]);
+              if (failedCount >= 500) {
+                failedList.push(images[0]);
                 idx++;
-                failedCount = 0;
               }
             }
             await new Promise(resolve => setTimeout(resolve, 100));
@@ -104,31 +111,29 @@
                   idx++;
                   failedCount = 0;
                 }
-                await new Promise(resolve => setTimeout(resolve, 100));
               }
+              await new Promise(resolve => setTimeout(resolve, 100));
             }
-            //if total number of images downloaded
-            //is less than total number of images in this artist's tag,
-            //continue download next page
-            //or if total number of images downloaded 
-            // is equal or more than total number of images in this artist's tag,
-            //download is finished, jump out of loop
-            if (total < allImg) {
-              page += 1;
-              console.log("下载成功,下一页", page)
-            } else {
-              isFinished = true;
-              console.log('下载完成: total >= allImg?', total, allImg, total >= allImg);
-              // if has failed images, then output to a json file.
-              if (index >= list.length - 1 && failedList.length > 0) {
-                console.log("判断成功");
-                let a = document.createElement("a");
-                a.href = URL.createObjectURL(new Blob([JSON.stringify(failedList)], { type: "application/json" }));
-                a.download = "failedList.json";
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-              }
+          }
+          //if total number of images downloaded
+          //is less than total number of images in this artist's tag,
+          //continue download next page
+          //or if total number of images downloaded 
+          // is equal or more than total number of images in this artist's tag,
+          //download is finished, jump out of loop
+          if (total < allImg) {
+            page += 1;
+            console.log("下载成功,下一页", page)
+          } else {
+            isFinished = true;
+            console.log('下载完成: total >= allImg?', total, allImg, total >= allImg);
+            if (index >= list.length - 1 && failedList.length > 0) {
+              let a = document.createElement("a");
+              a.href = URL.createObjectURL(new Blob([JSON.stringify(failedList)], { type: "application/json" }));
+              a.download = "failedList.json";
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
             }
           }
         }
@@ -211,7 +216,8 @@
         a.download = filename;
         a.target = '_blank';
         document.body.appendChild(a);
-        // a.click();
+        a.click();
+        document.body.removeChild(a);
         fflag = true;
       }).catch(err => {
         setTimeout(() => {
@@ -225,23 +231,22 @@
     // 封装获取图片的函数
     async function getImages(artist, page) {
 
-      let baseUrl = `https://derpibooru.org/api/v1/json/search/images?q=${artist}${((artist && tags) ? ',' + tags : tags)}&filter_id=56027&page=` + page;
+      let baseUrl = `https://derpibooru.org/api/v1/json/search/images?q=${artist ? artist : ''}${((artist && tags) ? ',' + tags : tags)}&filter_id=${filter}&&sf=upvotes&sd=desc&page=` + page;
       console.log(baseUrl);
       let rs = {};
       await axios.get(baseUrl, {
         timeout: 20000
       }).then(rslt => {
-        console.log('即将下载的总数:', rslt.data.total);
+        console.log('即将下载的总数:', rslt);
         rs = { images: rslt.data.images, allImg: rslt.data.total };
       }).catch(msg => {
         console.log(msg);
         setTimeout(() => {
-          rs = {};
+          rs = [];
         }, 6000)
       })
       return rs;
     }
-
   </script>
 </body>
 

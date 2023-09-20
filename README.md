@@ -28,7 +28,7 @@
 
 ### 1. Install node.js v16+.
 
-#### if you dont have node.js, here is node.js download link(mine): https://nodejs.org/dist/v16.20.0/.
+#### if you dont have node.js, here is node.js download link(dev version): https://nodejs.org/dist/v16.20.0/.
 
 ### 2. install Service Environment, use "npm i" in CMD.
 

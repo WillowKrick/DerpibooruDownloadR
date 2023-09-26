@@ -10,7 +10,7 @@ html {
     border-radius: 10px;
     min-width: 220px;
     overflow: hidden;
-    padding-bottom: 20px;
+    padding: 10px;
 
 }
 
@@ -71,4 +71,17 @@ button:active {
 
 input {
     text-align: center;
+    margin: 6px;
+}
+.mainTagSet{
+    width: 100%;
+}
+.mainTagSet h6{
+    margin: 6px; 
+}
+.tagSet{
+    width: 98%;
+    margin: 0;
+    min-height: 150px;
+    padding: 6px;
 }

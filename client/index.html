@@ -13,37 +13,149 @@
 
 <body>
   <div id="getdata">
+
     <div class="welcome">
-      <input class="artist" type="text" placeholder="input single artist">
-      <input class="tags" type="text" placeholder="* input tags" value="explicit">
+
+      <input class="tags" type="text" placeholder="* input tags" value="">
+
       <input class="filter" type="text" placeholder="FilterId, Default everything" value="">
-      <div class="choice">
-        <button class="addToList">add artist</button>
-        <button class="get">Start</button>
+
+      <div class="choicelist">
+        <div class="list">
+          <input class="artist" type="text" placeholder="input single artist">
+          <button class="addToList">insert artist</button>
+        </div>
+
+        <div class="list">
+          <input class="mainNaming" type="text" placeholder="main naming tag" value="">
+          <button class="addMainTags">add main naming tag</button>
+        </div>
+
+        <div class="list">
+          <input class="secNaming" type="text" placeholder="secondary tag naming" value="">
+          <button class="addSecTags">add secondary naming tag</button>
+        </div>
+
+        <div class="list">
+          <input class="deleteTag" type="text" placeholder="Input a Tag to remove from naming" value="">
+          <button class="removeTag">remove</button>
+        </div>
       </div>
+      <div class="choice">
+        <button class="get">Start</button>
+        <button class="clearAll">Set All Null</button>
+      </div>
+    </div>
+    <div class="tagSet">
+      <h6>Main Tagname filter Set</h2>
+        <p class="preTags mainTags"></p>
+    </div>
+    <div class="tagSet">
+      <h6>Secondary Tagname filter Set</h2>
+        <p class="preTags secTags"></p>
     </div>
   </div>
   </div>
   <script>
+    window.addEventListener('load', () => {
+      updateMainSet()
+      updateSecSet()
+    })
+    const updateMainSet = () => {
+      $$(".mainTags").innerHTML = mainTags.join("\t||\t")
+    }
+    const updateSecSet = () => {
+      $$(".secTags").innerHTML = secTags.join("\t||\t")
+    }
+
     const $$ = (selector, mult = false) => {
       return mult ? document.querySelectorAll(selector) : document.querySelector(selector)
     }
     let list = [];
     console.log(list.length);
-    let filter = 206450;
+    let filter = 56027;
     let failedList = [];
+    let tags = '';
+    let artist = '';
+
+    let mainTags = [
+      "artist", "suggestive", "explicit", "safe", "questionable", "artist",
+      "alicorn", "earth pony", "bat pony", "pegasus", "unicorn", "kirin", "hippogriff", "griffon",
+      " deer", "solo",
+      "mare", "female", "stallion", "male", "futa",
+      "bisexual", "intersex", "penis", "vulva", "vagina", "anthro", "human",
+      "lesbian", "gay", "pony", "cum", "anus", "horsecock"
+    ]
+    let secTags = [
+      "chest fluff", "dragon",
+      "twilight sparkle", "applejack", "pinkie pie", "rainbow dash", "fluttershy", "rarity",
+      "spike", "trixie", "starlight glimmer", "sunset shimmer",
+      "princess luna", "princess celestia", "princess cadance", "princess flurry hear", "shining armor",
+      "standing", "lying", "crying", "laughing", "running", "walking", "sleeping", "flying", "shipping", "sitting",
+      "talking", "smiling", "jumping", "dancing", "wacthing", "thinking", "lyra heartstrings", "bon bon", "shaking"
+    ]
     //get search artist and push to list
     $$('.addToList').onclick = function () {
-      let artist = $$('.artist').value;
+      let artist = $$('.artist').value.trim();
 
       //if artist input, push to list
-      artist && list.push(artist);
+      if (artist) {
+        if (!list.includes(artist)) {
+          list.push(artist);
+        } else {
+          alert("already In List")
+        }
+      }
+      artist.value = null;
       console.log(list);
     }
 
+    $$(".addMainTags").onclick = () => {
+      let mainNaming = $$(".mainNaming").value.trim()
+      if (mainNaming) {
+        if (!mainTags.includes(mainNaming)) {
+          mainTags.push(mainNaming)
+        }
+      }
+      $$(".mainNaming").value = ''
+      updateMainSet()
+    }
+
+    $$(".addSecTags").onclick = () => {
+      let secNaming = $$(".secNaming").value.trim()
+      if (secNaming) {
+        if (!secTags.includes(secNaming)) {
+          secTags.push(secNaming)
+        }
+      }
+      $$(".secNaming").value = ''
+      updateSecSet()
+    }
+
+    $$(".clearAll").onclick = () => {
+      mainTags = []
+      secTags = []
+      updateMainSet()
+      updateSecSet()
+    }
+
+    $$(".removeTag").onclick = () => {
+      let trashTag = $$(".deleteTag").value.trim()
+      if (trashTag) {
+        if (mainTags.includes(trashTag)) {
+          mainTags.splice(mainTags.indexOf(trashTag), 1)
+          updateMainSet()
+          $$(".deleteTag").value = ''
+        }
+        if (secTags.includes(trashTag)) {
+          secTags.splice(secTags.indexOf(trashTag), 1)
+          updateSecSet()
+          $$(".deleteTag").value = ''
+        }
+      }
+    }
     //initialization search +tags+ and +artist+ 
-    let tags = '';
-    let artist = '';
+
 
 
     //click get button start download images
@@ -60,7 +172,7 @@
 
         // default start page is 1, total is 0, finish status:isFinished is false
         //total is the number of images downloaded, allImg is the number of images in the artist's tag
-        let page = 264;
+        let page = 1;
         let total = 0;
         let isFinished = false;
         let failedCount = 0;
@@ -154,14 +266,7 @@
 
       let primary = [artist];
       let tmp = item.tags.filter(itm => !primary.includes(itm));
-      let mainTags = [
-      "artist","suggestive", "explicit", "safe", "questionable","artist",
-        "alicorn", "earth pony", "bat pony", "pegasus", "unicorn", "kirin", "hippogriff", "griffon",
-        " deer", "solo",
-        "mare", "female", "stallion", "male", "futa",
-        "bisexual", "intersex", "penis", "vulva", "vagina", "anthro", "human",
-        "lesbian", "gay", "pony", "cum", "anus", "horsecock"
-      ]
+
 
       let firstFilted = tmp.filter(itm => {
         return mainTags.includes(itm)
@@ -171,14 +276,7 @@
         return !mainTags.includes(itm)
       });
 
-      let secTags = [
-        "chest fluff", "dragon",
-        "twilight sparkle", "applejack", "pinkie pie", "rainbow dash", "fluttershy", "rarity",
-        "spike", "trixie", "starlight glimmer", "sunset shimmer",
-        "princess luna", "princess celestia", "princess cadance", "princess flurry hear", "shining armor",
-        "standing", "lying", "crying", "laughing", "running", "walking", "sleeping", "flying", "shipping", "sitting",
-        "talking", "smiling", "jumping", "dancing", "wacthing", "thinking", "lyra heartstrings", "bon bon", "shaking"
-      ]
+
       let oc = firstRemain.filter(itm => itm.startsWith("oc:"));
       secTags = secTags.concat(oc);
       let secFilted = firstRemain.filter(itm => {
@@ -205,7 +303,7 @@
 
       // used proxy server to avoid CORS ERROR
       let fflag = false
-      await axios.get("http://localhost:8080/"+url, {
+      await axios.get("http://localhost:8080/" + url, {
         responseType: 'blob',
         timeout: 60000
       }).then(response => {

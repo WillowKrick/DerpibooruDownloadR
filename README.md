@@ -6,6 +6,10 @@
 
 ## version of history
 
+### v23.09.26
+
+#### now you can only double click start.bat file to start project
+
 ### v23.09.20.01
 
 #### used node.js rebuilt project, and now you can use CMD to start service
@@ -26,12 +30,10 @@
 
 ## use
 
-### 1. Install node.js v16+.
+### 1. Install node.js (suggest v16).
 
 #### if you dont have node.js, here is node.js download link(dev version): https://nodejs.org/dist/v16.20.0/.
 
-### 2. install Service Environment, use "npm i" in CMD.
+### 2. double click "start.bat".
 
-### 3. click "start.bat".
-
-### 4. read TIPS in CMD window to do next operate
+### 3. read TIPS in CMD window to do next operate

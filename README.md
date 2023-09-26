@@ -4,6 +4,8 @@
 
 ### here is a node client that you can use it download pictures from derpibooru.
 
+### this downloader used cors anwhere, you can check it herre https://github.com/Rob--W/cors-anywhere
+
 ## version of history
 
 ### v23.09.26

@@ -102,6 +102,7 @@
       if (artist) {
         if (!list.includes(artist)) {
           list.push(artist);
+          $$('.artist').value = ''
         } else {
           alert("already In List")
         }

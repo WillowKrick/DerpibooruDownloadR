@@ -101,7 +101,7 @@
       "spike", "trixie", "starlight glimmer", "sunset shimmer",
       "princess luna", "princess celestia", "princess cadance", "princess flurry hear", "shining armor",
       "standing", "lying", "crying", "laughing", "running", "walking", "sleeping", "flying", "shipping", "sitting",
-      "talking", "smiling", "jumping", "dancing", "wacthing", "thinking", "lyra heartstrings", "bon bon", "shaking"
+      "talking", "smiling", "jumping", "dancing", "wacthing", "thinking", "lyra heartstrings", "bon bon", "shaking", "yawn"
     ]
     //get search artist and push to list
     $$('.addToList').onclick = function () {
@@ -286,9 +286,10 @@
         return !mainTags.includes(itm)
       });
 
+      secTags = secTags.filter(itm => !itm.startsWith("oc:"));
 
       let oc = firstRemain.filter(itm => itm.startsWith("oc:"));
-      secTags = secTags.concat(oc);
+
       let secFilted = firstRemain.filter(itm => {
         return secTags.includes(itm)
       });

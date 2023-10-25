@@ -123,23 +123,29 @@
     $$(".addMainTags").onclick = () => {
       let mainNaming = $$(".mainNaming").value.trim()
       if (mainNaming) {
-        if (!mainTags.includes(mainNaming)) {
-          mainTags.push(mainNaming)
+        if (!mainTags.includes(mainNaming) && !secTags.includes(mainNaming)) {
+          mainTags.push(mainNaming);
+          $$(".mainNaming").value = ''
+          updateMainSet()
+        }
+        else {
+          alert("已存在")
         }
       }
-      $$(".mainNaming").value = ''
-      updateMainSet()
     }
 
     $$(".addSecTags").onclick = () => {
       let secNaming = $$(".secNaming").value.trim()
       if (secNaming) {
-        if (!secTags.includes(secNaming)) {
-          secTags.push(secNaming)
+        if (!secTags.includes(secNaming) && !mainTags.includes(secNaming)) {
+          secTags.push(secNaming);
+          $$(".secNaming").value = ''
+          updateSecSet()
+        }
+        else {
+          alert("已存在")
         }
       }
-      $$(".secNaming").value = ''
-      updateSecSet()
     }
 
     $$(".clearAll").onclick = () => {

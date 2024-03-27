@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DB Geter</title>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-
+  <script src="./js/tools.js"></script>
   <link rel="stylesheet" href="css/get.css">
 </head>
 
@@ -39,30 +39,26 @@
           <input class="deleteTag" type="text" placeholder="remove a naming Tag" value="">
           <button class="removeTag">remove</button>
         </div>
-        <!-- <div class="list">
-          <label for="">Type:
-            <input type="radio" name="sortType" id="">Time
-            <input type="radio" name="sortType" id="">FavCount
-            <input type="radio" name="sortType" id="">upvote
-          </label>
-          <br>
-          <label for="">way sort:
-            <input type="radio" name="sortWay" id="">dec
-            <input type="radio" name="sortWay" id="">asc
-          </label>
-        </div> -->
       </div>
       <div class="choice">
         <button class="get">Start</button>
         <button class="clearAll">Set All Null</button>
       </div>
+      <div class="choice">
+        <h2 style="text-align: center;">Update folder, will add all every time
+        </h2>
+        <p class="totalFiles"></p>
+        <label for="readLocal" style="border: 1px skyblue dashed; padding: 2px;">choose folder</label><input type="file"
+          name="readLocal" id="readLocal" webkitdirectory directory multiple style="display: none;">
+      </div>
     </div>
+    <h2 style="text-align: center;">underneath is for use tags naming picture</h2>
     <div class="tagSet">
-      <h6>Main Tagname filter Set</h2>
+      <h6>Main Tags</h2>
         <p class="preTags mainTags"></p>
     </div>
     <div class="tagSet">
-      <h6>Secondary Tagname filter Set</h2>
+      <h6>Secondary Tags</h2>
         <p class="preTags secTags"></p>
     </div>
   </div>
@@ -79,15 +75,22 @@
       $$(".secTags").innerHTML = secTags.join("\t||\t")
     }
 
-    const $$ = (selector, mult = false) => {
-      return mult ? document.querySelectorAll(selector) : document.querySelector(selector)
-    }
+    let fileIds = [];
     let list = [];
     console.log(list.length);
     let filter = 56027;
     let failedList = [];
     let tags = '';
     let artist = '';
+
+    $$("#readLocal").addEventListener("change", (e) => {
+      let files = e.target.files;
+      !list.length && (list.push(e.target.files[0].webkitRelativePath.split("/")[0]));
+      for (let index = 0; index < files.length; index++) {
+        fileIds.push(Number(files[index].name.replace(/(_.*)/g, "")))
+      }
+      $$('.totalFiles').innerHTML = "total files:\t" + fileIds.length;
+    })
 
     let mainTags = [
       "artist", "suggestive", "explicit", "safe", "questionable", "artist",
@@ -270,6 +273,9 @@
 
     //get and download every image
     async function downloadImage(item) {
+      if (fileIds.includes(item.id) || item.tags.filter(itm => itm.startsWith("artist:")).length > 3) {
+        return true;
+      }
       //set image name use filtered tags, it has own naming rule
       //the most important tag is artist. it's the first tag
 
@@ -345,8 +351,7 @@
 
     // 封装获取图片的函数
     async function getImages(artist, page) {
-
-      let baseUrl = `https://derpibooru.org/api/v1/json/search/images?q=${artist ? artist : ''}${((artist && tags) ? ',' + tags : tags)}&filter_id=${filter}&&sf=upvotes&sd=desc&page=` + page;
+      let baseUrl = `https://trixiebooru.org//api/v1/json/search/images?q=${artist ? artist : ''}${((artist && tags) ? ',' + tags : tags)}&filter_id=${filter}&per_page=50&page=` + page;
       console.log(baseUrl);
       let rs = {};
       await axios.get(baseUrl, {

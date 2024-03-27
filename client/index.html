@@ -257,6 +257,10 @@
             console.log("下载成功,下一页", page)
           } else {
             isFinished = true;
+            $$('.get').removeAttribute("disabled");
+            fileIds.length && (list = []);
+            fileIds = [];
+            $$('.totalFiles').innerHTML = "已完成, 选择文件夹重新开始";
             console.log('下载完成: total >= allImg?', total, allImg, total >= allImg);
             if (index >= list.length - 1 && failedList.length > 0) {
               let a = document.createElement("a");

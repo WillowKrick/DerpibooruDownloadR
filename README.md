@@ -8,6 +8,20 @@
 
 ## version of history
 
+### v24.03.29
+
+#### you can update folder with name of artist, for example: [artist:sample (X)] [sample(√)]
+
+#### for using update folder, you have to add ARTIST NAME folder fist, then add other subfolders
+
+#### plus, your file name must be start with picture id, and has one "\_" bhind it
+
+#### changed single page download 50 pictures
+
+#### changed main site to trixiebooru
+
+#### if single file has more than 3 artist, it will skip
+
 ### v23.09.26
 
 #### now you can only double click start.bat file to start project
